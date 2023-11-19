@@ -1,0 +1,17 @@
+{% extends "user/user_base.html" %}
+{% block title %}Add New Project{% endblock %}
+{% block body %}
+<div class="container" id="addNewProject">
+    <form method="post">
+        {{form.csrf_token}}
+        <div>
+            {{form.project_name.label}} {{form.project_name(size=20)}}
+        </div>
+        <div>
+            {{form.project_description.label}} {{form.project_description}}
+        </div>
+        <div>
+            {{form.submit}}
+        </div>
+    </form>
+</div>{% endblock %}

@@ -1,0 +1,205 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "flask"
+  namespace: "default"
+  labels:
+    app: "flask"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "flask"
+  template:
+    metadata:
+      labels:
+        app: "flask"
+    spec:
+      containers:
+      - name: "flask"
+        image: "hakiozdem/flask-app8:deneme"
+
+
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "flask-service"
+  namespace: "default"
+  labels:
+    app: "flask"
+spec:
+  ports:
+  - protocol: "TCP"
+    port: 5000
+    targetPort: 5000
+  selector:
+    app: "flask"
+
+---
+apiVersion: "v1"
+kind: "ConfigMap"
+metadata:
+  name: "postgres-config"
+  namespace: "default"
+  labels:
+    app: "postgres"
+data:
+  POSTGRES_DB: "todos"
+  POSTGRES_USER: "postgres"
+  POSTGRES_PASSWORD: "postgres"
+
+
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "postgres"
+  namespace: "default"
+  labels:
+    app: "postgres"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "postgres"
+  template:
+    metadata:
+      labels:
+        app: "postgres"
+    spec:
+      containers:
+      - name: "postgres"
+        image: "postgres:9.6.2"
+        env:
+        - name: "POSTGRES_DB"
+          valueFrom:
+            configMapKeyRef:
+              key: "POSTGRES_DB"
+              name: "postgres-config"
+        - name: "POSTGRES_USER"
+          valueFrom:
+            configMapKeyRef:
+              key: "POSTGRES_USER"
+              name: "postgres-config"
+        - name: "POSTGRES_PASSWORD"
+          valueFrom:
+            configMapKeyRef:
+              key: "POSTGRES_PASSWORD"
+              name: "postgres-config"
+        ports:
+          - containerPort: 5432
+            name: postgres
+
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "postgres"
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: "postgres"
+
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "redis"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "redis"
+  template:
+    metadata:
+      labels:
+        app: "redis"
+    spec:
+      containers:
+      - name: "redis"
+        image: "redis:latest"
+        ports:
+        - containerPort: 6379
+
+
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "redis-service"
+spec:
+  selector:
+    app: "redis"
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+
+---
+apiVersion: v1
+kind: "ConfigMap"
+metadata:
+  name: "nginx-config"
+data:
+  nginx.conf: |
+    events {}
+
+    http {
+      server {
+        listen 80;
+
+        location / {
+          proxy_pass http://flask-service:5000;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+        }
+      }
+    }
+        
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "nginx"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "nginx"
+  template:
+    metadata:
+      labels:
+        app: "nginx"
+    spec:
+      containers:
+        - name: "nginx"
+          image: "nginx:latest"
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: "nginx-config-volume"
+              mountPath: "/etc/nginx/nginx.conf"
+              subPath: "nginx.conf"
+              readOnly: true
+      volumes:
+        - name: "nginx-config-volume"
+          configMap:
+            name: "nginx-config"
+
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "nginx-service"
+spec:
+  selector:
+    app: "nginx"
+  ports:
+    - port: 80
+      targetPort: 80
+  type: "NodePort"

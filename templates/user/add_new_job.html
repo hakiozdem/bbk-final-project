@@ -1,0 +1,19 @@
+{% extends "user/user_base.html" %}
+{% block title %}Add New Job to Project{% endblock %}
+{% block body %}
+    <h1>Add New Job to Project</h1>
+    <div class="container" id="addNewJob">
+        <form method="post">
+            {{form.csrf_token}}
+            <div>
+                {{form.job_name.label}} {{form.job_name(size=20)}}
+            </div>
+            <div>
+                {{form.job_description.label}} {{form.job_description}}
+            </div>
+            <div>
+                {{form.submit(class="btn btn-info")}}
+            </div>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "user/user_base.html" %}
+{% block title %}Update {{job.job_name}}{% endblock %}
+{% block body %}
+    <div class="container" id="update_job">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                {{form.csrf_token}}
+                <div class="form-group">
+                  {{ form.job_name.label }} {{ form.job_name(class="form-control",value=job.job_name) }}
+                </div>
+                <div class="form-group">
+                  {{ form.job_description.label }} {{ form.job_description(class="form-control",value=job.job_description) }}
+                </div>
+                <div class="form-check">
+                  {{ form.is_in_progress(class="form-check-input",value=job.is_in_progress) }}
+                  {{ form.is_in_progress.label(class="form-check-label") }}
+                </div>
+                <div class="form-check">
+                  {{ form.is_finished(class="form-check-input",value=job.is_finished) }}
+                  {{ form.is_finished.label(class="form-check-label") }}
+                </div>
+                <div>{{form.submit}}</div>
+              </form>
+            
+              <script>
+                var isFinishedCheckbox = document.getElementById("is_finished");
+                var isInProgressCheckbox = document.getElementById("is_in_progress");
+            
+                function handleCheckboxChange() { //Bu fonksiyonu finish seçeneği işaretlendikten sonra tekrar inprogress iptal edilemesin diye yaptım.
+                  if (isFinishedCheckbox.checked) {
+                    isInProgressCheckbox.checked = true;
+                    isInProgressCheckbox.disabled = true;
+                  } else {
+                    isInProgressCheckbox.disabled = false;
+                  }
+                }
+            
+                isFinishedCheckbox.addEventListener("change", handleCheckboxChange);
+                handleCheckboxChange(); // Sayfa yüklendiğinde durumu kontrol etmek için çağrılıyor
+              </script>
+            </form>
+    </div>
+{% endblock %}

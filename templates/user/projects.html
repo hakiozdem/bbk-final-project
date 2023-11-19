@@ -1,0 +1,30 @@
+{% extends "user/user_base.html" %}
+{% block title %}Your Projects{% endblock %}
+{% block body %}
+    {% if projects %}
+    <div class="container">
+        <table class="bordered">
+            <thead>
+                <tr>
+                    <td>Projects</td>
+                    <td>Enter Project</td>
+                    <td>Delete Project</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in projects %}
+                <tr>
+                    <td>{{project[0]}}</td>
+                    <td><a href="{{url_for('my_project',project_id=project[1])}}" class="btn btn-primary">Enter Tables</a></td>
+                    <td><a href="{{url_for('delete_project',project_id=project[1])}}" class="btn btn-primary">Delete Project</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+    </div>
+    {% else %}
+    <h1>No Projects. Please Create One.</h1>
+    {% endif %}
+    <a href="{{url_for('add_new_project')}}" class="btn btn-success">Add New Project</a>
+{% endblock %}

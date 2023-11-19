@@ -1,0 +1,27 @@
+{% extends "user/user_base.html" %}
+{% block title %}Update {{user.name}} {{user.surname}}{% endblock %}
+{% block body %}
+
+    <div class="container" id="updateUser">
+        <form method="post">
+            {{form.csrf_token}}
+            <div>
+                {{form.name.label}} {{form.name(value=user.name)}}
+            </div>
+            <div>
+                {{form.surname.label}}{{form.surname(value=user.surname)}}
+            </div>
+            <div>
+                {{form.email.label}} {{form.email(value=user.email)}}
+            </div>
+            <div>
+                {{form.submit(class="btn btn-primary")}}
+            </div>
+            <!-- <p><b>User's Name</b><input type="text" name="name" value="{{user.name}}"></p> -->
+            <!--<p><b>User's Surname</b><input type="text" name="name" value="{{user.surname}}"></p>
+            <p><b>User's Email</b><input type="text" name="name" value="{{user.email}}"></p>-->
+            
+        </form>
+        <a href="{{url_for('change_password')}}" class="btn btn-warning">Change Password</a>
+    </div>
+{% endblock %}

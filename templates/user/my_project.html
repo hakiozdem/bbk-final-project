@@ -1,0 +1,79 @@
+{% extends "user/user_base.html" %}
+{% block title %}My Project{% endblock %}
+<style>
+table{
+    border: 2px solid;
+    width: 30%
+}
+</style>
+{% block body %}
+    <div class="container">
+        <div class="row">
+            {% if undone_jobs%}
+    <div class="col-md-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Unfinished Jobs</th>
+                    <th>About Job</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in undone_jobs %}
+                <tr>
+                <td>{{job[1]}}</td>
+                <td><a href="{{url_for('details',job_id=job[0])}}" class="btn btn-success">Enter Details</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    {% if in_progress_jobs%}
+    <div class="col-md-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>In Progress Jobs</th>
+                    <th>About Job</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in in_progress_jobs %}
+                <tr>
+                <td>{{job[1]}}</td>
+                <td><a href="{{url_for('details',job_id=job[0])}}" class="btn btn-success">Enter Details</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    {% if finished_jobs %}
+    <div class="col-md-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Finished Jobs</th>
+                    <th>About Job</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in finished_jobs %}{}
+            <tr>
+                <td>{{job[1]}}</td>
+                <td><a href="{{url_for('details',job_id=job[0])}}" class="btn btn-success">Enter Details</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        
+    </div>
+    {% endif %}
+    {% if not undone_jobs and not in_progress_jobs and not finished_jobs %}
+    <h1>There is no jobs. Lets add some.</h1>
+    {% endif %}
+</div>
+    </div>
+    <a href="{{url_for('add_new_job')}}" class="btn btn-info">Add Jobs to do</a>
+{% endblock %}

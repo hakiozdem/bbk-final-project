@@ -1,0 +1,35 @@
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      {{ form.job_name.label }} {{ form.job_name(class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.job_description.label }} {{ form.job_description(class="form-control") }}
+    </div>
+    <div class="form-check">
+      {{ form.is_in_progress(class="form-check-input") }}
+      {{ form.is_in_progress.label(class="form-check-label") }}
+    </div>
+    <div class="form-check">
+      {{ form.is_finished(class="form-check-input") }}
+      {{ form.is_finished.label(class="form-check-label") }}
+    </div>
+    <button type="submit" class="btn btn-primary">Güncelle</button>
+  </form>
+
+  <script>
+    var isFinishedCheckbox = document.getElementById("is_finished");
+    var isInProgressCheckbox = document.getElementById("is_in_progress");
+
+    function handleCheckboxChange() {
+      if (isFinishedCheckbox.checked) {
+        isInProgressCheckbox.checked = true;
+        isInProgressCheckbox.disabled = true;
+      } else {
+        isInProgressCheckbox.disabled = false;
+      }
+    }
+
+    isFinishedCheckbox.addEventListener("change", handleCheckboxChange);
+    handleCheckboxChange(); // Sayfa yüklendiğinde durumu kontrol etmek için çağrılıyor
+  </script>
